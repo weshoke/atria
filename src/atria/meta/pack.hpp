@@ -43,6 +43,7 @@ ABL_DISABLE_WARNINGS
 #include <boost/mpl/next_prior.hpp>
 #include <boost/mpl/deref.hpp>
 #include <boost/mpl/begin_end_fwd.hpp>
+#include <boost/mpl/apply.hpp>
 ABL_RESTORE_WARNINGS
 #include <type_traits>
 
@@ -102,6 +103,30 @@ using unpack = typename detail::unpack<MF, T>::type;
 
 template <template<typename...> class MF, typename T>
 using unpack_t = typename unpack<MF, T>::type;
+
+namespace detail {
+
+template <typename MF, typename ArgT>
+struct unpack_
+{
+  using type = typename boost::mpl::apply<MF, ArgT>;
+};
+
+template <typename MF, typename... ArgTs>
+struct unpack_<MF, meta::pack<ArgTs...> >
+{
+  using type = typename boost::mpl::apply<MF, ArgTs...>::type;
+};
+
+} // namespace detail
+
+/*!
+ * Metafunction that given a Boost.MPL lambda `MF` and a type `ArgT`,
+ * returns `boost::mpl::apply<M, ArgT>::type`, or if ArgT is of the
+ * form `pack<Args...>` then returns `boost::mpl::apply<MF, Args...>`.
+ */
+template <typename MF, typename T>
+using unpack_ = typename detail::unpack_<MF, T>::type;
 
 struct pack_tag;
 

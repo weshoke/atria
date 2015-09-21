@@ -94,6 +94,9 @@ target_compile_options(atria
 target_link_libraries(atria
   ${Boost_LIBRARIES})
 
+add_executable(example-boost-signal examples/boost_signal.cpp)
+target_link_libraries(example-boost-signal atria)
+
 # Definining tests
 if(GTEST_FOUND)
   add_library(gtest_internal STATIC
